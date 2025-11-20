@@ -1,6 +1,7 @@
 # Code Refactoring Summary
 
-This document outlines the refactoring changes made to improve code maintainability, testability, and adherence to SOLID principles.
+This document outlines the refactoring changes made to improve code maintainability, testability,
+and adherence to SOLID principles.
 
 ## Folder Structure
 
@@ -24,23 +25,25 @@ The codebase has been reorganized into a clear, maintainable structure:
 
 ### Single Responsibility Principle (SRP)
 
-- **Before**: Components like `Sidebar.tsx` and `dashboards/page.tsx` had multiple responsibilities (UI rendering, data fetching, business logic, state management).
+- **Before**: Components like `Sidebar.tsx` and `dashboards/page.tsx` had multiple
+  responsibilities (UI rendering, data fetching, business logic, state management).
 
-- **After**: 
-  - Components focus solely on rendering UI
-  - Business logic moved to services (`services/api-key-service.ts`)
-  - Data fetching logic extracted to custom hooks (`hooks/use-api-keys.ts`)
-  - Form logic separated into hooks (`hooks/use-api-key-form.ts`)
-  - Utility functions handle single concerns (key generation, masking, transformation)
+- **After**:
+    - Components focus solely on rendering UI
+    - Business logic moved to services (`services/api-key-service.ts`)
+    - Data fetching logic extracted to custom hooks (`hooks/use-api-keys.ts`)
+    - Form logic separated into hooks (`hooks/use-api-key-form.ts`)
+    - Utility functions handle single concerns (key generation, masking, transformation)
 
 ### Open/Closed Principle (OCP)
 
-- **Before**: Navigation items were hardcoded in the Sidebar component, making it difficult to extend.
+- **Before**: Navigation items were hardcoded in the Sidebar component, making it difficult to
+  extend.
 
-- **After**: 
-  - Navigation configuration extracted to `constants/navigation.tsx`
-  - Easy to add new navigation items without modifying components
-  - Service layer can be extended without modifying existing code
+- **After**:
+    - Navigation configuration extracted to `constants/navigation.tsx`
+    - Easy to add new navigation items without modifying components
+    - Service layer can be extended without modifying existing code
 
 ### Liskov Substitution Principle (LSP)
 
@@ -58,11 +61,11 @@ The codebase has been reorganized into a clear, maintainable structure:
 
 - **Before**: Components directly depended on Supabase client (`lib/supabase.ts`)
 
-- **After**: 
-  - Components depend on abstractions (service layer)
-  - `ApiKeyService` abstracts database operations
-  - Easy to swap out Supabase for another data source
-  - Components are testable with mock services
+- **After**:
+    - Components depend on abstractions (service layer)
+    - `ApiKeyService` abstracts database operations
+    - Easy to swap out Supabase for another data source
+    - Components are testable with mock services
 
 ## Key Improvements
 
@@ -136,13 +139,15 @@ The refactored code is now much more testable:
 ### Example Migration
 
 **Before:**
+
 ```typescript
-const { data, error } = await supabase.from("api_keys").select("*");
+const {data, error} = await supabase.from("api_keys").select("*");
 ```
 
 **After:**
+
 ```typescript
-const { apiKeys, loading, error } = useApiKeys();
+const {apiKeys, loading, error} = useApiKeys();
 // or
 const apiKeys = await apiKeyService.fetchAll();
 ```
@@ -163,4 +168,3 @@ const apiKeys = await apiKeyService.fetchAll();
 ✅ **Type Safety**: Strong typing prevents runtime errors
 ✅ **Scalability**: Structure supports growth and new features
 ✅ **SOLID Compliance**: Code follows best practices and design principles
-
