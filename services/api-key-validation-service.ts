@@ -1,13 +1,12 @@
-import { supabase } from "@/lib/supabase";
-
 /**
  * Service for API key validation
  * Single Responsibility: Handles API key validation logic
+ * Uses the /api/validate-key endpoint for validation
  */
 export class ApiKeyValidationService {
   /**
-   * Validates if an API key exists in the Supabase database
-   * Queries the api_keys table to check if the provided key exists
+   * Validates if an API key exists in the database
+   * Calls the /api/validate-key endpoint which queries Supabase
    * @param apiKey The API key to validate
    * @returns true if the key exists in the database, false otherwise
    */
@@ -17,26 +16,17 @@ export class ApiKeyValidationService {
         return false;
       }
 
-      // Query Supabase api_keys table to check if key exists
-      const { data, error } = await supabase
-        .from("api_keys")
-        .select("id")
-        .eq("key", apiKey.trim())
-        .single();
+      // Call the API endpoint to validate the key
+      const response = await fetch("/api/validate-key", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ apiKey: apiKey.trim() }),
+      });
 
-      // If error (including "not found"), key is invalid
-      if (error) {
-        // PGRST116 means no rows found - this is expected for invalid keys
-        if (error.code === "PGRST116") {
-          return false;
-        }
-        // Other errors (network, permissions, etc.) also mean invalid
-        console.error("Error validating API key:", error);
-        return false;
-      }
-
-      // If data exists, key is valid
-      return !!data;
+      const data = await response.json();
+      return data.valid === true;
     } catch (error) {
       console.error("Unexpected error validating API key:", error);
       return false;
