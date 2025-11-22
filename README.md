@@ -21,6 +21,10 @@
 - yarn add @langchain/core
 - yarn add @langchain/openai
 
+## Vercel
+
+- https://dandi-sage.vercel.app/
+
 ## Composer
 
 - CMD + I -> turn on composer
